@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111712">
+  <meta name="description" content="Matees's game statistics across Rocket League, CS2, League of Legends and Steam.">
+  <title>Matees / Game stats</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Matees game stats home"><span class="brand-mark" aria-hidden="true">M</span><span>Matees<span class="brand-light"> / game stats</span></span></a>
+      <button id="refresh" class="refresh" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.2 6.2M20 4v7h-7"/></svg>Refresh data</button>
+    </header>
+
+    <main id="top">
+      <div class="intro">
+        <div>
+          <h1>Every game tells<br><em>a different story.</em></h1>
+          <p>Ranked progress, match form and the games in rotation. One place to keep track.</p>
+        </div>
+        <div class="intro-meta"><span class="live-dot"></span><span id="updated">Checking stats…</span></div>
+      </div>
+
+      <div class="tracker-grid">
+        <section class="tracker tracker-rocket" id="rocket" aria-labelledby="rocket-title">
+          <div class="section-head"><div><span class="game-tag">Rocket League</span><h2 id="rocket-title">On the pitch</h2></div><a href="https://rocketleague.tracker.network/rocket-league/profile/epic/Matees_czech/overview" target="_blank" rel="noopener noreferrer" class="external">Live profile <span aria-hidden="true">↗</span></a></div>
+          <div class="tracker-content" data-content="rocket" aria-live="polite"><p class="pending">Loading replay stats…</p></div>
+        </section>
+
+        <section class="tracker tracker-cs" id="cs2" aria-labelledby="cs-title">
+          <div class="section-head"><div><span class="game-tag">Counter-Strike 2 · Leetify</span><h2 id="cs-title">Round by round</h2></div><a href="https://leetify.com/app/profile/76561199147369622" target="_blank" rel="noopener noreferrer" class="external">Leetify profile <span aria-hidden="true">↗</span></a></div>
+          <div class="tracker-content" data-content="leetify" aria-live="polite"><p class="pending">Loading Leetify stats…</p></div>
+        </section>
+
+        <section class="tracker tracker-league" id="league" aria-labelledby="league-title">
+          <div class="section-head"><div><span class="game-tag">League of Legends · EUNE</span><h2 id="league-title">The climb</h2></div><a href="https://tracker.gg/lol/profile/riot/Sm1ted%23Diff/overview" target="_blank" rel="noopener noreferrer" class="external">Live profile <span aria-hidden="true">↗</span></a></div>
+          <div class="tracker-content" data-content="league" aria-live="polite"><p class="pending">Loading ranked stats…</p></div>
+        </section>
+      </div>
+
+      <section class="steam-section" id="steam" aria-labelledby="steam-title">
+        <div class="steam-heading"><div><h2 id="steam-title">The Steam shelf</h2><p>Games across three profiles, sorted by recent activity and playtime.</p></div><span class="steam-count" id="steam-count">3 profiles</span></div>
+        <div class="steam-controls"><label for="steam-search">Find a game</label><input id="steam-search" type="search" placeholder="Search the libraries" autocomplete="off" disabled><select id="steam-profile" aria-label="Choose Steam profile" disabled><option value="all">All profiles</option></select></div>
+        <div id="steam-content" aria-live="polite"><p class="pending">Loading Steam libraries…</p></div>
+      </section>
+    </main>
+
+    <footer><span>Matees / game stats</span><span>Stats update when the providers do. Rocket replay totals cover uploaded replays only.</span></footer>
+  </div>
+</body>
+</html>
