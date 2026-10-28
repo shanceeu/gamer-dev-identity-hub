@@ -12,6 +12,7 @@ const date = value => {
   return Number.isNaN(parsed.getTime()) ? "" : new Intl.DateTimeFormat("en", { day: "numeric", month: "short" }).format(parsed);
 };
 const percent = value => value === null || value === undefined ? "—" : `${Math.round(value * 100)}%`;
+const decimal = (value, digits = 1) => value === null || value === undefined ? "—" : value.toFixed(digits);
 
 function metric(label, value) {
   const node = make("div", "metric");
@@ -73,19 +74,54 @@ function renderLeetify(data) {
   root.replaceChildren(content);
 }
 
+let leagueView = "overview";
+let leagueData = null;
 function renderLeague(data) {
+  leagueData = data;
   const root = $('[data-content="league"]');
+  for (const button of document.querySelectorAll("#league-stat-switch button")) {
+    button.disabled = data.state !== "ready";
+    button.setAttribute("aria-pressed", String(button.dataset.leagueView === leagueView));
+  }
   if (data.state !== "ready") return message(root, data);
   const content = document.createDocumentFragment();
   content.append(make("p", "player-name", data.name));
-  content.append(metrics([
-    ["Solo queue", data.rank],
-    ["League points", fmt(data.lp)],
-    ["Ranked record", data.wins === null ? "—" : `${data.wins}W · ${data.losses ?? 0}L`],
-  ]));
+  const stats = data.recentStats || {};
+  const detail = make("div", "detail-line");
+  const addDetail = (label, value) => detail.append(make("span", "", label), make("strong", "", value));
+  if (leagueView === "combat") {
+    content.append(metrics([["Recent KDA", decimal(stats.kda, 2)], ["Avg champion damage", stats.avgDamage == null ? "—" : fmt(Math.round(stats.avgDamage))], ["Kill participation", percent(stats.killParticipation)]]));
+    addDetail("Average K / D / A", `${decimal(stats.avgKills)} / ${decimal(stats.avgDeaths)} / ${decimal(stats.avgAssists)}`);
+  } else if (leagueView === "farming") {
+    content.append(metrics([["CS / min", decimal(stats.csPerMinute)], ["Gold / min", stats.goldPerMinute == null ? "—" : fmt(Math.round(stats.goldPerMinute))], ["Vision / min", decimal(stats.visionPerMinute, 2)]]));
+    addDetail("Champion damage / min", stats.damagePerMinute == null ? "—" : fmt(Math.round(stats.damagePerMinute)));
+  } else if (leagueView === "champions") {
+    content.append(metrics([["Most played", data.champions?.[0]?.champion || "—"], ["Unique champions", fmt(data.champions?.length)], ["Recent matches", fmt(stats.sample)]]));
+    const champions = make("div", "league-champions");
+    for (const champion of (data.champions || []).slice(0, 4)) {
+      const row = make("div", "league-champion");
+      row.append(make("strong", "", champion.champion), make("span", "", `${champion.games} ${champion.games === 1 ? "game" : "games"} · ${champion.wins} ${champion.wins === 1 ? "win" : "wins"}`));
+      champions.append(row);
+    }
+    content.append(champions);
+  } else {
+    content.append(metrics([["Solo queue", data.rank], ["League points", fmt(data.lp)], ["Ranked record", data.wins === null ? "—" : `${data.wins}W · ${data.losses ?? 0}L`]]));
+    addDetail("Ranked win rate", data.wins === null || data.losses === null || (!data.wins && !data.losses) ? "—" : percent(data.wins / (data.wins + data.losses)));
+    addDetail("Recent win rate", percent(stats.winRate));
+  }
+  if (detail.childNodes.length) content.append(detail);
+  content.append(make("p", "source-note", "Recent match stats use up to five games; solo queue rank covers the current season."));
   content.append(matchList(data.recent, item => `${item.champion} · ${item.kills}/${item.deaths}/${item.assists}`));
   root.replaceChildren(content);
 }
+
+$("#league-stat-switch").addEventListener("click", event => {
+  const button = event.target.closest("button[data-league-view]");
+  if (!button || button.disabled || !leagueData) return;
+  leagueView = button.dataset.leagueView;
+  renderLeague(leagueData);
+  button.focus();
+});
 
 function renderRocket(data) {
   const root = $('[data-content="rocket"]');
