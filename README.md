@@ -2,6 +2,8 @@
 
 A Netlify-ready personal game dashboard for Rocket League, Counter-Strike 2, League of Legends, and three Steam libraries. It uses server-side Netlify Functions so API keys are never sent to the browser.
 
+The League tracker has selectable overview, combat, farming, and champion views. Recent KDA, damage, kill participation, CS, gold, and vision are calculated from up to five recent matches; the solo queue rank and record cover the current season.
+
 ## Accounts configured
 
 | Tracker | Account |
